@@ -11,55 +11,43 @@ public:
 
 
 
+
 class Solution {
 public:
-    Node* flatten(Node* head, Node* &tail)
-    {
+    Node* flatten(Node* head) {
+
         if (head == NULL)
-        {
-            tail = NULL;
             return NULL;
-        }
+
+        stack<Node*> st;
 
         Node* curr = head;
 
         while (curr != NULL)
         {
-            Node* next = curr->next;
-
             if (curr->child != NULL)
             {
-                Node* childTail = NULL;
+                if (curr->next != NULL)
+                {
+                    st.push(curr->next);
+                }
 
-                curr->next = flatten(curr->child, childTail);
+                curr->next = curr->child;
                 curr->next->prev = curr;
 
                 curr->child = NULL;
-
-                if (next != NULL)
-                {
-                    childTail->next = next;
-                    next->prev = childTail;
-                }
-
-                tail = childTail;
             }
-            else
+
+            if (curr->next == NULL && !st.empty())
             {
-                tail = curr;
+                curr->next = st.top();
+                st.pop();
+
+                curr->next->prev = curr;
             }
 
-            curr = next;
+            curr = curr->next;
         }
-
-        return head;
-    }
-
-    Node* flatten(Node* head)
-    {
-        Node* tail = NULL;
-
-        flatten(head, tail);
 
         return head;
     }
